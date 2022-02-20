@@ -26,6 +26,7 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       uses: ishworkh/docker-image-artifact-download@v1
       with:
+        workflow: build.yml
         image: ${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
         
     # AWS Credential 설정
