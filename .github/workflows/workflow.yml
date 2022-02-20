@@ -101,7 +101,6 @@ jobs:
       - name: Download Docker Image Artifact
         uses: ishworkh/docker-image-artifact-download@v1
         with:
-          workflow: build.yml
           image: ${{ env.REGISTRY_URL }}/${{ env.REPOSITORY_NAME }}:${{ github.run_number }}
 
       # Gitlab 로그인
@@ -121,5 +120,8 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Weekly Artifact Cleanup
+      - name: Artifact Cleanup
         uses: jimschubert/delete-artifacts-action@v1
+        with:
+          log_level: 'debug'
+          min_bytes: '0'
