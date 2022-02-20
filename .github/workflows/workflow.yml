@@ -103,16 +103,3 @@ jobs:
         run: docker push ${{ env.REGISTRY_URL }}/${{ env.REPOSITORY_NAME }}:${{ github.run_number }}
 
     # TODO: 서버 원격 배포 추가
-
-  # Clean
-  clean:
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-      - uses: actions/checkout@v1
-
-      - name: Artifact Cleanup
-        uses: jimschubert/delete-artifacts-action@v1
-        with:
-          log_level: 'debug'
-          min_bytes: '0'
