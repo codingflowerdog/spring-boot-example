@@ -26,7 +26,7 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       uses: ishworkh/docker-image-artifact-download@v1
       with:
-        image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        image: ${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY_NAME }}:${{ github.sha }}
         
     # AWS Credential 설정
     - name: Configure AWS credentials
@@ -47,5 +47,5 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ env.REPOSITORY_NAME }}
-        IMAGE_TAG: ${{ github.run_number }}
+        IMAGE_TAG: ${{ github.sha }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
