@@ -34,9 +34,9 @@ jobs:
           
     # Gradle build
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
-      with:
-        arguments: build
+      run: |
+        chmod +x gradlew
+        ./gradlew build
         
     # AWS 로그인
     - name: Login to Amazon ECR
