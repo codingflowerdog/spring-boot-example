@@ -67,7 +67,7 @@ jobs:
       run: |
         mkdir build
         mkdir build/libs
-        mv app.js /build/libs/app.js
+        mv app.jar /build/libs/app.jar
       
      # AWS Credential 설정
     - name: Configure AWS credentials
