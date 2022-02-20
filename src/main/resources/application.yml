@@ -1,0 +1,45 @@
+# 라이브 환경 설정
+
+# 서버 설정
+server:
+  address: 0.0.0.0
+  port: 8080
+
+# 웹 설정
+web:
+  clientUrl: client_server_url
+
+# 스프링 설정
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username:
+    password:
+    url:
+    hikari:
+      connection-timeout: 2000
+      maximun-pool-size: 10
+      idle-timeout: 300000
+      max-lifetime: 600000
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      use-new-id-generator-mappings: false
+      temp:
+        use_jdbc_metadata_defaults: false
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    date-format: yyyy-MM-dd HH:mm:ss
+
+# 로그
+logging:
+  level:
+    root: off
+    com:
+      example:
+        web: info
+

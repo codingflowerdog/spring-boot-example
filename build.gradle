@@ -1,0 +1,89 @@
+plugins {
+	id 'org.springframework.boot' version '2.6.1'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+}
+
+group = 'com.example'
+version = '1.0.0'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// 스프링 부트
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'org.springframework.ws:spring-ws-core'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+	// 테스트
+	implementation 'junit:junit:4.13.1'
+
+	//QueryDsl
+	implementation 'com.querydsl:querydsl-jpa'
+	annotationProcessor 'com.querydsl:querydsl-apt'
+	testImplementation  "com.querydsl:querydsl-jpa"
+	testAnnotationProcessor  "com.querydsl:querydsl-apt"
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Mysql
+	runtimeOnly 'mysql:mysql-connector-java'
+
+	// Gson
+	implementation 'com.google.code.gson:gson'
+
+	// 로그
+	compileOnly 'org.slf4j:slf4j-api'
+}
+
+// QueryDSL
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+	library = "com.querydsl:querydsl-apt"
+}
+
+sourceSets {
+	main.java.srcDirs querydslDir
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}
+
+
+test {
+	useJUnitPlatform()
+}
+
+bootJar{
+	archiveFileName = 'app.jar'
+}
+
+jar {
+	enabled = false
+}
