@@ -82,7 +82,7 @@ jobs:
         IMAGE_TAG: ${{ github.run_number }}
       run: |
         docker build -t spring-boot-example .
-        docker tag spring-boot-example:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker tag spring-boot-example:latest public.ecr.aws/n4r3u9q8/spring-boot-example:latest
     
     # AWS ECR 푸시
     - name: AWS ECR Push
@@ -90,5 +90,6 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ env.REPOSITORY_NAME }}
         IMAGE_TAG: ${{ github.run_number }}
-      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      run: docker push public.ecr.aws/n4r3u9q8/spring-boot-example:latest
+           
     
