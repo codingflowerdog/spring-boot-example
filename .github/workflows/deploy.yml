@@ -1,0 +1,48 @@
+name: AWS ECR Manual Deploy
+on:
+  workflow_dispatch:
+    
+env:
+  CACHED_BUILD_PATHS: ${{ github.workspace }}/build
+  BUILD_CACHE_KEY: ${{ github.sha }}
+  REPOSITORY_NAME: spring-boot-example
+  
+jobs:    
+  # 배포
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+      
+    # Docker 이미지 다운로드
+    - name: Download image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ env.REPOSITORY_NAME }}
+        IMAGE_TAG: ${{ github.run_number }}
+      uses: ishworkh/docker-image-artifact-download@v1
+      with:
+        image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        
+    # AWS Credential 설정
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-2
+        
+    # AWS 로그인
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    
+    # AWS ECR 푸시
+    - name: AWS ECR Push
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ env.REPOSITORY_NAME }}
+        IMAGE_TAG: ${{ github.run_number }}
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
