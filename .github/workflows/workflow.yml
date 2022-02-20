@@ -3,6 +3,10 @@ name: Docker Build and Deploy
 on:
   # Workflow Manual
   workflow_dispatch:
+    inputs:
+      boolean:
+        type: boolean
+        description: 원격 서버 배포 (TODO)
 
   # Workflow Event
   #push:
@@ -65,19 +69,6 @@ jobs:
         run: |
           mkdir -p build/libs 
           mv app.jar build/libs/app.jar
-
-      # AWS Credential 설정
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2
-
-      # AWS 로그인
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
 
       # Docker 빌드
       - name: Docker Build
