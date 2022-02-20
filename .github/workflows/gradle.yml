@@ -55,16 +55,6 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
-    
-    # 빌드 결과 디렉토리 생성
-    - name: Create Build Directory
-      run: |
-        mkdir build
-        mkdir build/libs
-        
-    # 출력
-    - name: echo test2
-      run: ls
       
     # 빌드 결과 다운로드
     - name: Download Build File
@@ -72,9 +62,12 @@ jobs:
       with:
         name: build
         
-    # 출력
-    - name: echo test
-      run: ls
+    # 빌드 파일 경로 설정
+    - name: Create Build Directory
+      run: |
+        mkdir build
+        mkdir build/libs
+        mv app.js /build/libs/app.js
       
      # AWS Credential 설정
     - name: Configure AWS credentials
