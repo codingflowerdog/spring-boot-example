@@ -5,11 +5,13 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-
+  # 워크플로우 수동 처리
+  workflow_dispatch:
+    
 env:
   CACHED_BUILD_PATHS: ${{ github.workspace }}/build
   BUILD_CACHE_KEY: ${{ github.sha }}
-  PRIVATE_REPOSITORY_NAME: spring-boot-example
+  REPOSITORY_NAME: spring-boot-example
   
 jobs:
   # 빌드
@@ -67,7 +69,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+        aws-region: ap-northeast-2
         
     # AWS 로그인
     - name: Login to Amazon ECR
@@ -78,7 +80,7 @@ jobs:
     - name: Docker Build
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ steps.select-target.outputs.target }}-ecr
+        ECR_REPOSITORY: ${{ env.REPOSITORY_NAME }}
         IMAGE_TAG: ${{ github.run_number }}
       run: |
         docker build -t spring-boot-example .
