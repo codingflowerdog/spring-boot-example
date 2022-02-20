@@ -9,7 +9,7 @@ on:
 env:
   CACHED_BUILD_PATHS: ${{ github.workspace }}/build
   BUILD_CACHE_KEY: ${{ github.sha }}
-  REPOSITORY_NAME: public.ecr.aws/n4r3u9q8/spring-boot-example
+  PRIVATE_REPOSITORY_NAME: spring-boot-example
   
 jobs:
   # 빌드
@@ -60,7 +60,7 @@ jobs:
       run: |
         mkdir -p build/libs 
         mv app.jar build/libs/app.jar
-      
+
      # AWS Credential 설정
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -78,7 +78,7 @@ jobs:
     - name: Docker Build
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ env.REPOSITORY_NAME }}
+        ECR_REPOSITORY: ${{ steps.select-target.outputs.target }}-ecr
         IMAGE_TAG: ${{ github.run_number }}
       run: |
         docker build -t spring-boot-example .
