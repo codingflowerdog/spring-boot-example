@@ -9,6 +9,7 @@ on:
 env:
   CACHED_BUILD_PATHS: ${{ github.workspace }}/build
   BUILD_CACHE_KEY: ${{ github.sha }}
+  REPOSITORY_NAME: spring-boot-example
   
 jobs:
   # 빌드
@@ -55,8 +56,8 @@ jobs:
     - name: Docker Build
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: spring-boot-example
-        IMAGE_TAG: ${{github.run_number}}
+        ECR_REPOSITORY: ${{ env.REPOSITORY_NAME }}
+        IMAGE_TAG: ${{ github.run_number }}
       run: |
         docker build -t spring-boot-example .
         docker tag spring-boot-example:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
@@ -69,6 +70,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
+    # AWS Credential 설정
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-2
+        
+    # AWS 로그인
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+      
     # 캐시 설정
     - name: Check Build Cache
       uses: actions/cache@v2
@@ -80,7 +94,7 @@ jobs:
     - name: AWS ECR Push
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: spring-boot-example
-        IMAGE_TAG: ${{github.run_number}}
+        ECR_REPOSITORY: ${{ env.REPOSITORY_NAME }}
+        IMAGE_TAG: ${{ github.run_number }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     
