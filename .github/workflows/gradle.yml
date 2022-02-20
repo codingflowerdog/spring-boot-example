@@ -26,7 +26,7 @@ jobs:
         distribution: 'temurin'
     
     # 캐시 설정
-    - name: Check dependency cache
+    - name: Check Build Cache
       uses: actions/cache@v2
       with:
         path: ${{ env.CACHED_BUILD_PATHS }}
@@ -37,6 +37,14 @@ jobs:
       run: |
         chmod +x gradlew
         ./gradlew build
+        
+    # AWS Credential 설정
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-2
         
     # AWS 로그인
     - name: Login to Amazon ECR
@@ -62,16 +70,11 @@ jobs:
     - uses: actions/checkout@v2
     
     # 캐시 설정
-    - name: Check dependency cache
+    - name: Check Build Cache
       uses: actions/cache@v2
       with:
         path: ${{ env.CACHED_BUILD_PATHS }}
         key: ${{ env.BUILD_CACHE_KEY }}
-        
-     # AWS 로그인
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
       
     # AWS ECR 푸시
     - name: AWS ECR Push
