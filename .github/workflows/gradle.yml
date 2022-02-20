@@ -26,13 +26,6 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
-    
-    # 캐시 설정
-    - name: Check Build Cache
-      uses: actions/cache@v2
-      with:
-        path: ${{ env.CACHED_BUILD_PATHS }}
-        key: ${{ env.BUILD_CACHE_KEY }}
           
     # Gradle build
     - name: Build with Gradle
@@ -82,7 +75,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     # Docker 이미지 빌드
-    - name: Docker Build
+    - name: Docker Build & Push
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ env.REPOSITORY_NAME }}
@@ -90,19 +83,5 @@ jobs:
       run: |
         docker build -t spring-boot-example .
         docker tag spring-boot-example:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      
-    # 캐시 설정
-    - name: Check Build Cache
-      uses: actions/cache@v2
-      with:
-        path: ${{ env.CACHED_BUILD_PATHS }}
-        key: ${{ env.BUILD_CACHE_KEY }}
-      
-    # AWS ECR 푸시
-    - name: AWS ECR Push
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ env.REPOSITORY_NAME }}
-        IMAGE_TAG: ${{ github.run_number }}
-      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     
