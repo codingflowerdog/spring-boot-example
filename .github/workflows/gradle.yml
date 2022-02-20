@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  CACHED_BUILD_PATHS: ${{ github.workspace }}/build
+  BUILD_CACHE_KEY: ${{ github.sha }}
+  
 jobs:
   # 빌드
   build:
@@ -25,7 +29,8 @@ jobs:
     - name: Check dependency cache
       uses: actions/cache@v2
       with:
-        path: ${{ github.workspace }}/build
+        path: ${{ env.CACHED_BUILD_PATHS }}
+        key: ${{ env.BUILD_CACHE_KEY }}
           
     # Gradle build
     - name: Build with Gradle
@@ -60,7 +65,8 @@ jobs:
     - name: Check dependency cache
       uses: actions/cache@v2
       with:
-        path: ${{ github.workspace }}/build
+        path: ${{ env.CACHED_BUILD_PATHS }}
+        key: ${{ env.BUILD_CACHE_KEY }}
         
      # AWS 로그인
     - name: Login to Amazon ECR
