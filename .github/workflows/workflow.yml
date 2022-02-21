@@ -128,7 +128,7 @@ jobs:
           author_name: Github Action Notification
           fields: repo, message, commit, workflow, job, took
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           
       # Remote Deploy
       - name: Remote Deploy
