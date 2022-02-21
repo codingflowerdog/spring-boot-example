@@ -36,6 +36,7 @@ jobs:
           key: ${{ secrets.REMOTE_SSH_KEY }}
           port: ${{ secrets.REMOTE_SSH_PORT }}
           script: |
-            bash --login
+            bash --login <<EOF
             docker pull ${{ env.REGISTRY_URL }}/${{ env.REGISTRY_NAME }}:${{ github.run_number }}
             docker run -it -d -p ${{ secrets.DOCKER_PORT }}:${{ secrets.APPLICATION_PORT }} --name ${{ env.REGISTRY_NAME }} ${{ env.REGISTRY_URL }}/${{ env.REGISTRY_NAME }}:${{ github.run_number }}
+            EOF
