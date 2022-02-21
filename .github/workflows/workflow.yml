@@ -48,6 +48,16 @@ jobs:
         with:
           name: build
           path: build/libs/app.jar
+      
+      # 빌드 결과 알림
+      - name: Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: Github Action Notification
+          fields: repo, message, commit, workflow, job, took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }
   
   # Docker Build
   docker-build:
@@ -81,6 +91,15 @@ jobs:
         with:
           image: ${{ env.REGISTRY_URL }}/${{ env.REGISTRY_NAME }}:${{ github.run_number }}
 
+      # 빌드 결과 알림
+      - name: Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: Github Action Notification
+          fields: repo, message, commit, workflow, job, took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }
   # Deploy
   deploy:
     runs-on: ubuntu-latest
@@ -101,6 +120,16 @@ jobs:
       - name: Gitlab Push
         run: docker push ${{ env.REGISTRY_URL }}/${{ env.REGISTRY_NAME }}:${{ github.run_number }}
       
+      # 배포 결과 알림
+      - name: Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: Github Action Notification
+          fields: repo, message, commit, workflow, job, took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }
+          
       # Remote Deploy
       - name: Remote Deploy
         if: ${{ github.event.inputs.isRequiredRemoteDeploy }} == 'true'
@@ -115,3 +144,20 @@ jobs:
             docker pull ${{ env.REGISTRY_URL }}/${{ env.REGISTRY_NAME }}:${{ github.run_number }}
             docker run -it -d -p ${{ secrets.DOCKER_PORT }}:${{ secrets.APPLICATION_PORT }} --name ${{ env.REGISTRY_NAME }} ${{ env.REGISTRY_URL }}/${{ env.REGISTRY_NAME }}:${{ github.run_number }}
             EOF
+            
+      # 원격 서보 배포 결과 알림
+      - name: Notification
+        if: ${{ github.event.inputs.isRequiredRemoteDeploy }} == 'true'
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: Github Action Notification
+          custom_payload: |
+            {
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                text: `Github Action Notification\nRemote deploy is ${{ job.status }\nhost:${{ secrets.REMOTE_HOST }}\nimage:${{ env.REGISTRY_URL }}/${{ env.REGISTRY_NAME }}:${{ github.run_number }}`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }
