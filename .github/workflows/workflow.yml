@@ -154,9 +154,39 @@ jobs:
           author_name: Github Action Notification
           custom_payload: |
             {
-              attachments: [{
-                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
-                text: `Github Action Notification\nRemote deploy is ${{ job.status }}\nhost:${{ secrets.REMOTE_HOST }}\nimage:${{ env.REGISTRY_URL }}/${{ env.REGISTRY_NAME }}:${{ github.run_number }}`,
+              "attachments": [{
+                  color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                  "blocks": [
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "Github Action Notification",
+                        "emoji": true
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "fields": [
+                        {
+                          "type": "mrkdwn",
+                          "text": "*Host*\n${{ secrets.REMOTE_HOST }}"
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "*Registry*\n${{ env.REGISTRY_URL }}"
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "*Docker Image*\n${{ env.REGISTRY_NAME }}"
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "*Tag*\n${{ github.run_number }}"
+                        }
+                      ]
+                    }
+                  ]
               }]
             }
         env:
