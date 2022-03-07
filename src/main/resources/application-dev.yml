@@ -9,6 +9,15 @@ server:
 web:
   clientUrl: client_server_url
 
+# 인증 설정
+security:
+  oauth2:
+    client:
+      client-id: test_id
+      client-secret: test_secret
+      grant-type: client_credentials
+      scope: read
+
 # 스프링 설정
 spring:
   datasource:

@@ -27,6 +27,7 @@ dependencies {
 	implementation 'org.springframework.ws:spring-ws-core'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 	// 테스트
 	implementation 'junit:junit:4.13.1'
@@ -49,6 +50,12 @@ dependencies {
 
 	// 로그
 	compileOnly 'org.slf4j:slf4j-api'
+
+	// 인증
+	implementation 'org.springframework.security.oauth:spring-security-oauth2:2.3.5.RELEASE'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.3.5.RELEASE'
+
 }
 
 // QueryDSL
